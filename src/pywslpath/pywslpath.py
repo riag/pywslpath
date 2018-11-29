@@ -141,7 +141,7 @@ def get_winsys_path(win_path_type):
 @click.option('-u', 'path_format', flag_value='unix')
 @click.option('-w', 'path_format', flag_value='windows')
 @click.option('--abs-path', 'abs_path_option', default=True)
-@click.option('-d', '--doubledash-path', 'doubledash_path_option', default=True)
+@click.option('-d', '--doubledash-path', 'doubledash_path_option', default=False)
 @click.option('-D', '--desktop', 'win_path_type', flag_value='desktop', default='')
 @click.option('-A', '--appdata', 'win_path_type', flag_value='appdata')
 @click.option('-T', '--temp', 'win_path_type', flag_value='temp')
