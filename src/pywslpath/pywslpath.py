@@ -100,19 +100,19 @@ def get_winsys_env(k):
             stderr=subprocess.STDOUT,
             encoding='UTF-8',
             text=True
-    )
+    ).split('\n')[0]
 
 def get_winsys_folder(k):
     '''
     see https://docs.microsoft.com/en-us/dotnet/api/system.environment.specialfolder?view=netframework-4.7.2
     '''
     return subprocess.check_output(
-        'powershell.exe -Command "[Environment]::GetFolderPath(\"%s\")' % k, 
+        'powershell.exe -Command "& { [Environment]::GetFolderPath(\\\"%s\\\") }"' % k, 
             stderr=subprocess.STDOUT,
             shell=True,
             encoding='UTF-8',
             text=True
-        )
+        ).split('\n')[0]
 
 winsys_type_path_map = {
     'userprofile': lambda: get_winsys_folder('UserProfile'),
