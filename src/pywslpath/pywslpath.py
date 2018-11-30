@@ -17,7 +17,9 @@ win_abs_path_doubledash_pattern = re.compile(r'^[A-Za-z]:(\\\\[^:/\\\*\?<>\|]+)*
 
 def is_abs_path(path):
     if path.startswith('/'): return True
-    if win_abs_path_pattern.match(path) or win_abs_path_pattern2.match(path): return True
+    if win_abs_path_pattern.match(path): return True
+    if win_abs_path_pattern2.match(path): return True
+    if win_abs_path_doubledash_pattern.match(path): return True
 
     return False
 
