@@ -37,17 +37,17 @@ def is_windows_path(path):
 def convert_to_win_path(doubledash_path_option, path, check=True):
     if check:
         if win_abs_path_doubledash_pattern.match(path):
-            if doubledash_path_option: 
+            if doubledash_path_option:
                 return path
             else:
                 p = path.replace('\\\\', '\\')
                 return p
-        if win_abs_path_pattern.match(path) and doubledash_path_option: 
+        if win_abs_path_pattern.match(path) and doubledash_path_option:
             p = path.replace('\\', '\\\\')
             return p
         if win_abs_path_pattern2.match(path):
             return path
-    
+
     if path.startswith('/proc/'):
         raise OSError("%s is not real file or directory" % path)
 
@@ -60,7 +60,7 @@ def convert_to_win_path(doubledash_path_option, path, check=True):
 
     p = p[len('/mnt/'):]
     idx = p.find('/')
-    drive =p[:idx] 
+    drive =p[:idx]
     p = p[idx:]
     if doubledash_path_option:
         p = p.replace('/', '\\\\')
@@ -109,7 +109,7 @@ def get_winsys_folder(k):
     see https://docs.microsoft.com/en-us/dotnet/api/system.environment.specialfolder?view=netframework-4.7.2
     '''
     return subprocess.check_output(
-        'powershell.exe -Command "& { [Environment]::GetFolderPath(\\\"%s\\\") }"' % k, 
+        'powershell.exe -Command "& { [Environment]::GetFolderPath(\\\"%s\\\") }"' % k,
             stderr=subprocess.STDOUT,
             shell=True,
             encoding='UTF-8',
@@ -120,6 +120,7 @@ winsys_type_path_map = {
     'userprofile': lambda: get_winsys_folder('UserProfile'),
     'desktop': lambda: get_winsys_folder('DESKTOP'),
     'appdata': lambda: get_winsys_folder('ApplicationData'),
+    'localappdata': lambda: get_winsys_folder('LocalApplicationData'),
     'temp': lambda: get_winsys_folder('TEMP'),
     'sys': lambda: get_winsys_folder('System'),
     'windir': lambda: get_winsys_folder('Windows'),
@@ -144,15 +145,16 @@ def get_winsys_path(win_path_type):
 @click.option('-w', 'path_format', flag_value='windows')
 @click.option('--abs-path', 'abs_path_option', default=True)
 @click.option('-d', '--doubledash-path', 'doubledash_path_option', default=False)
-@click.option('-D', '--desktop', 'win_path_type', flag_value='desktop', default='')
-@click.option('-A', '--appdata', 'win_path_type', flag_value='appdata')
-@click.option('-T', '--temp', 'win_path_type', flag_value='temp')
-@click.option('-S', '--sysdir', 'win_path_type', flag_value='sys')
-@click.option('-W', '--windir', 'win_path_type', flag_value='windir')
-@click.option('-s', '--start-menu', 'win_path_type', flag_value='startmenu')
+@click.option('--desktop', 'win_path_type', flag_value='desktop', default='')
+@click.option('--appdata', 'win_path_type', flag_value='appdata')
+@click.option('--localappdata', 'win_path_type', flag_value='localappdata')
+@click.option('--temp', 'win_path_type', flag_value='temp')
+@click.option('--sysdir', 'win_path_type', flag_value='sys')
+@click.option('--windir', 'win_path_type', flag_value='windir')
+@click.option('--start-menu', 'win_path_type', flag_value='startmenu')
 @click.option('--startup', 'win_path_type', flag_value='startup')
-@click.option('-H', '--home', 'win_path_type', flag_value='home')
-@click.option('-P', '--program-files', 'win_path_type', flag_value='programfiles')
+@click.option('--home', 'win_path_type', flag_value='home')
+@click.option('--program-files', 'win_path_type', flag_value='programfiles')
 @click.argument('path', nargs=-1)
 def main(show_version, path_format, abs_path_option, doubledash_path_option, win_path_type, path):
     if show_version:
@@ -171,7 +173,7 @@ def main(show_version, path_format, abs_path_option, doubledash_path_option, win
             raise OSError("only support one path")
 
         p = path[0]
-        is_abs = is_abs_path(p) 
+        is_abs = is_abs_path(p)
 
         if not is_abs and not abs_path_option:
             print(convert_relative_path(p))
@@ -191,7 +193,7 @@ def main(show_version, path_format, abs_path_option, doubledash_path_option, win
         convert_path = convert_to_wsl_path(p, check=False)
     elif is_unix_path(p):
         convert_path = convert_to_win_path(doubledash_path_option, p, check=False)
-    
+
     print(convert_path)
 
 if __name__ == '__main__':
