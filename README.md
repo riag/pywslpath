@@ -29,11 +29,11 @@ python3 pywslpath.py [OPTIONS] [PATH]
 
 例子
 ```
-python3 pywslpath.py -w /mnt/c/
+python3 pywslpath.py -w -d /mnt/c/
 
-python3 pywslpath.py -w test
+python3 pywslpath.py -w -d test
 
-python3 pywslpath.py -w --localappdata
+python3 pywslpath.py -w -d --localappdata
 
 python3 pywslpath.py -u c:/Windows
 python3 pywslpath.py -u c:\\Windows
@@ -59,24 +59,24 @@ function wd(){
 VSCODE_BIN='code'
 
 function vc(){
-	p=`python3 ~/bin/pywslpath.py -w $1`
+	p=`python3 ~/bin/pywslpath.py -w -d $1`
 	$VSCODE_BIN -r $p
 }
 function vcn(){
-	p=`python3 ~/bin/pywslpath.py -w $1`
+	p=`python3 ~/bin/pywslpath.py -w -d $1`
 	$VSCODE_BIN -n $p
 }
 
 
-win_local_appdata_winpath=`python3 ~/bin/pywslpath.py -w -L`
+win_local_appdata_winpath=`python3 ~/bin/pywslpath.py -w -d --localappdata`
 ATOM_BIN_WINPATH="$win_local_appdata_winpath\\atom\\atom.exe"
 function ac(){
-	p=`python3 ~/bin/pywslpath.py -w $1`
+	p=`python3 ~/bin/pywslpath.py -w -d $1`
 	powershell.exe "Start-Process -FilePath \"$ATOM_BIN_WINPATH\" -ArgumentList \"$p\""
 }
 
 function acn(){
-	p=`python3 ~/bin/pywslpath.py -w $1`
+	p=`python3 ~/bin/pywslpath.py -w -d $1`
 	powershell.exe "Start-Process -FilePath \"$ATOM_BIN_WINPATH\" -ArgumentList \"-n\", \"$p\""
 }
 ```
@@ -89,7 +89,7 @@ function open(){
 		python3 ~/bin/pywslpath.py $1
 		return
 	fi
-	p=`python3 ~/bin/pywslpath.py -w $1`
+	p=`python3 ~/bin/pywslpath.py -w -d $1`
 	powershell.exe start "\"$p\""
 }
 ```
