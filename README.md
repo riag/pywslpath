@@ -5,7 +5,7 @@ windows 和 WSL 的路径互相转换，以及获取 windows 下的系统目录
 使用 setuptools 来安装
 
 ```
-python3 setuo.py install
+python3 setup.py install
 ```
 
 ## 用法
