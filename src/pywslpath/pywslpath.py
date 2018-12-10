@@ -1,4 +1,4 @@
-# /usr/sbin/env python3
+# coding='utf-8'
 
 import os
 import re
@@ -167,7 +167,7 @@ def get_winsys_path(win_path_type):
 @click.option('-w', 'path_format', flag_value='windows')
 @click.option('--abs-path', 'abs_path_option', is_flag=True, default=True)
 @click.option('-d', '--doubledash-path', 'doubledash_path_option',
-              default=False)
+              is_flag=True, default=False)
 @click.option('--desktop', 'win_path_type', flag_value='desktop', default='')
 @click.option('--appdata', 'win_path_type', flag_value='appdata')
 @click.option('--localappdata', 'win_path_type', flag_value='localappdata')
