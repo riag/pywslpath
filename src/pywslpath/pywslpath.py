@@ -13,26 +13,40 @@ if WSL_ROOTFS_DIR and WSL_ROOTFS_DIR.endswith('/'):
 
 win_abs_path_pattern = re.compile(r'^[A-Za-z]:(\\[^:/\\\*\?<>\|]+)*(\\)?$')
 win_abs_path_pattern2 = re.compile(r'^[A-Za-z]:(/[^:/\\\*\?<>\|]+)*(/)?$')
-win_abs_path_doubledash_pattern = re.compile(r'^[A-Za-z]:(\\\\[^:/\\\*\?<>\|]+)*(\\\\)?$')
+win_abs_path_doubledash_pattern = re.compile(
+    r'^[A-Za-z]:(\\\\[^:/\\\*\?<>\|]+)*(\\\\)?$'
+    )
+
 
 def is_abs_path(path):
-    if path.startswith('/'): return True
-    if win_abs_path_pattern.match(path): return True
-    if win_abs_path_pattern2.match(path): return True
-    if win_abs_path_doubledash_pattern.match(path): return True
+    if path.startswith('/'):
+        return True
+    if win_abs_path_pattern.match(path):
+        return True
+    if win_abs_path_pattern2.match(path):
+        return True
+    if win_abs_path_doubledash_pattern.match(path):
+        return True
 
     return False
+
 
 def is_unix_path(path):
-    if path.startswith('/'): return True
+    if path.startswith('/'):
+        return True
     return False
+
 
 def is_windows_path(path):
-    if win_abs_path_pattern.match(path) != None: return True
-    if win_abs_path_pattern2.match(path) != None: return True
-    if win_abs_path_doubledash_pattern.match(path) != None: return True
+    if win_abs_path_pattern.match(path) is not None:
+        return True
+    if win_abs_path_pattern2.match(path) is not None:
+        return True
+    if win_abs_path_doubledash_pattern.match(path) is not None:
+        return True
 
     return False
+
 
 def convert_to_win_path(doubledash_path_option, path, check=True):
     if check:
@@ -60,7 +74,7 @@ def convert_to_win_path(doubledash_path_option, path, check=True):
 
     p = p[len('/mnt/'):]
     idx = p.find('/')
-    drive =p[:idx]
+    drive = p[:idx]
     p = p[idx:]
     if doubledash_path_option:
         p = p.replace('/', '\\\\')
@@ -71,7 +85,8 @@ def convert_to_win_path(doubledash_path_option, path, check=True):
 
 def convert_to_wsl_path(path, check=True):
     if check:
-        if is_unix_path(path): return path
+        if is_unix_path(path):
+            return path
 
     if not WSL_ROOTFS_DIR:
         raise OSError("please define env var WSL_ROOTFS_DIR")
@@ -81,19 +96,22 @@ def convert_to_wsl_path(path, check=True):
     drive = p[:idx].lower()
     p = p[idx+1:]
     p = p.replace('\\', '/')
-    p = '/mnt/%s%s'%(drive, p)
+    p = '/mnt/%s%s' % (drive, p)
     if p.startswith(WSL_ROOTFS_DIR):
         p = p[len(WSL_ROOTFS_DIR):]
     return p
+
 
 # 转换相对路径
 def convert_relative_path(path):
     return path.replace('\\', '/')
 
+
 def get_env(k):
     def inner():
         return os.environ[k]
     return inner
+
 
 def get_winsys_env(k):
     return subprocess.check_output(
@@ -104,17 +122,19 @@ def get_winsys_env(k):
             text=True
     ).split('\n')[0]
 
+
 def get_winsys_folder(k):
     '''
     see https://docs.microsoft.com/en-us/dotnet/api/system.environment.specialfolder?view=netframework-4.7.2
     '''
     return subprocess.check_output(
         'powershell.exe -Command "& { [Environment]::GetFolderPath(\\\"%s\\\") }"' % k,
-            stderr=subprocess.STDOUT,
-            shell=True,
-            encoding='UTF-8',
-            text=True
+        stderr=subprocess.STDOUT,
+        shell=True,
+        encoding='UTF-8',
+        text=True
         ).split('\n')[0]
+
 
 winsys_type_path_map = {
     'userprofile': lambda: get_winsys_folder('UserProfile'),
@@ -130,21 +150,24 @@ winsys_type_path_map = {
     'programfiles': lambda: get_winsys_folder('ProgramFiles'),
 }
 
+
 def get_winsys_path(win_path_type):
     v = winsys_type_path_map[win_path_type]
-    if not v: return None
+    if not v:
+        return None
 
     if type(v) is str:
         return v
-    t = v()
     return v()
+
 
 @click.command()
 @click.option('--version', 'show_version', is_flag=True)
 @click.option('-u', 'path_format', flag_value='unix')
 @click.option('-w', 'path_format', flag_value='windows')
 @click.option('--abs-path', 'abs_path_option', is_flag=True, default=True)
-@click.option('-d', '--doubledash-path', 'doubledash_path_option', default=False)
+@click.option('-d', '--doubledash-path', 'doubledash_path_option',
+              default=False)
 @click.option('--desktop', 'win_path_type', flag_value='desktop', default='')
 @click.option('--appdata', 'win_path_type', flag_value='appdata')
 @click.option('--localappdata', 'win_path_type', flag_value='localappdata')
@@ -156,14 +179,15 @@ def get_winsys_path(win_path_type):
 @click.option('--home', 'win_path_type', flag_value='home')
 @click.option('--program-files', 'win_path_type', flag_value='programfiles')
 @click.argument('path', nargs=-1)
-def main(show_version, path_format, abs_path_option, doubledash_path_option, win_path_type, path):
+def main(show_version, path_format, abs_path_option, doubledash_path_option,
+         win_path_type, path):
     if show_version:
-        print('version is %s' % version)
+        print('version is %s' % __version__)
         return
 
     p = path
     if win_path_type:
-        p =  get_winsys_path(win_path_type)
+        p = get_winsys_path(win_path_type)
         if not p:
             raise OSError("not support windows path type %s" % win_path_type)
     else:
@@ -192,9 +216,11 @@ def main(show_version, path_format, abs_path_option, doubledash_path_option, win
     if is_windows_path(p):
         convert_path = convert_to_wsl_path(p, check=False)
     elif is_unix_path(p):
-        convert_path = convert_to_win_path(doubledash_path_option, p, check=False)
+        convert_path = convert_to_win_path(
+                doubledash_path_option, p, check=False)
 
     print(convert_path)
+
 
 if __name__ == '__main__':
     main()

@@ -8,15 +8,15 @@ with io.open('src/pywslpath/pywslpath.py', 'rt', encoding='utf-8') as f:
 
 setup(
     name='pywslpath',
-    version= version,
+    version=version,
     author='riag',
     description='convert WSL Linux to windows path',
     license='Apache',
     author_email='riag@163.com',
-    url = 'https://github.com/riag/pywslpath',
+    url='https://github.com/riag/pywslpath',
     platforms='WSL Linux',
     package_dir={'': 'src'},
-    packages = find_packages(
+    packages=find_packages(
         where='src',
         exclude=['contrib', 'docs', 'tests*', 'tasks']
     ),
@@ -24,7 +24,7 @@ setup(
         'Programming Language :: Python :: 3',
     ],
     entry_points={
-        'console_scripts':[
+        'console_scripts': [
             'pywslpath=pywslpath.pywslpath:main',
         ]
     },
