@@ -5,7 +5,7 @@ import re
 import subprocess
 import click
 
-version = '0.1.0'
+__version__ = '0.1.0'
 
 WSL_ROOTFS_DIR = os.environ['WSL_ROOTFS_DIR']
 if WSL_ROOTFS_DIR and WSL_ROOTFS_DIR.endswith('/'):
