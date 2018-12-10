@@ -1,12 +1,19 @@
 # pywslpath
 windows 和 WSL 的路径互相转换，以及获取 windows 下的系统目录
 
+## 安装
+使用 setuptools 来安装
+
+```
+python3 setuo.py install
+```
+
 ## 用法
 因为该脚本支持把 WSL Linux 下的所有路径转成 Windows,
 所以要设置 `WSL_ROOTFS_DIR` 环境变量，指向当前 WSL Linux 安装的路径
 
 ```
-python3 pywslpath.py [OPTIONS] [PATH]
+pywslpath [OPTIONS] [PATH]
 ```
 
 参数
@@ -29,15 +36,15 @@ python3 pywslpath.py [OPTIONS] [PATH]
 
 例子
 ```
-python3 pywslpath.py -w -d /mnt/c/
+pywslpath -w -d /mnt/c/
 
-python3 pywslpath.py -w -d test
+pywslpath -w -d test
 
-python3 pywslpath.py -w -d --localappdata
+pywslpath -w -d --localappdata
 
-python3 pywslpath.py -u c:/Windows
-python3 pywslpath.py -u c:\\Windows
-python3 pywslpath.py -u "c:\Windows"
+pywslpath -u c:/Windows
+pywslpath -u c:\\Windows
+pywslpath -u "c:\Windows"
 ```
 
 ## 使用场景
@@ -45,7 +52,7 @@ python3 pywslpath.py -u "c:\Windows"
 在 zsh/bash 里定义以下函数
 ```
 function wd(){
-	p=`python3 ~/bin/pywslpath.py -u $1`
+	p=`pywslpath -u $1`
 	cd $p
 }
 ```
@@ -59,24 +66,24 @@ function wd(){
 VSCODE_BIN='code'
 
 function vc(){
-	p=`python3 ~/bin/pywslpath.py -w -d $1`
+	p=`pywslpath -w -d $1`
 	$VSCODE_BIN -r $p
 }
 function vcn(){
-	p=`python3 ~/bin/pywslpath.py -w -d $1`
+	p=`pywslpath -w -d $1`
 	$VSCODE_BIN -n $p
 }
 
 
-win_local_appdata_winpath=`python3 ~/bin/pywslpath.py -w -d --localappdata`
+win_local_appdata_winpath=`pywslpath -w -d --localappdata`
 ATOM_BIN_WINPATH="$win_local_appdata_winpath\\atom\\atom.exe"
 function ac(){
-	p=`python3 ~/bin/pywslpath.py -w -d $1`
+	p=`pywslpath -w -d $1`
 	powershell.exe "Start-Process -FilePath \"$ATOM_BIN_WINPATH\" -ArgumentList \"$p\""
 }
 
 function acn(){
-	p=`python3 ~/bin/pywslpath.py -w -d $1`
+	p=`pywslpath -w -d $1`
 	powershell.exe "Start-Process -FilePath \"$ATOM_BIN_WINPATH\" -ArgumentList \"-n\", \"$p\""
 }
 ```
@@ -86,10 +93,10 @@ function acn(){
 ```
 function open(){
 	if [ "$1" = "--help" ];then
-		python3 ~/bin/pywslpath.py $1
+		pywslpath $1
 		return
 	fi
-	p=`python3 ~/bin/pywslpath.py -w -d $1`
+	p=`pywslpath -w -d $1`
 	powershell.exe start "\"$p\""
 }
 ```
