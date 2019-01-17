@@ -14,12 +14,15 @@ setup(
     license='Apache',
     author_email='riag@163.com',
     url='https://github.com/riag/pywslpath',
-    platforms='WSL Linux',
+    platforms=['linux',],
     package_dir={'': 'src'},
     packages=find_packages(
         where='src',
         exclude=['contrib', 'docs', 'tests*', 'tasks']
     ),
+    install_requires=[
+        'click>=7.0',
+    ],
     classifiers=[
         'Programming Language :: Python :: 3',
     ],
