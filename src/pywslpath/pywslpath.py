@@ -5,7 +5,7 @@ import re
 import subprocess
 import click
 
-__version__ = '0.1.0'
+__version__ = '0.2.0'
 
 WSL_ROOTFS_DIR = os.environ['WSL_ROOTFS_DIR']
 if WSL_ROOTFS_DIR and WSL_ROOTFS_DIR.endswith('/'):
@@ -113,9 +113,26 @@ def get_env(k):
     return inner
 
 
-def get_winsys_env(k):
+def get_winsys_envvar(k):
+    '''
+    从 powershell 里的环境变量获取路径
+    '''
     return subprocess.check_output(
             'powershell.exe -Command "echo \$%s"' % k,
+            shell=True,
+            stderr=subprocess.STDOUT,
+            encoding='UTF-8',
+            text=True
+    ).split('\n')[0]
+
+
+def get_winsys_regenv(k):
+    '''
+     从注册表里的环境变量获取路径
+    '''
+
+    return subprocess.check_output(
+            'powershell.exe -Command "& {(get-childitem Env:%s).Value}"' % k,
             shell=True,
             stderr=subprocess.STDOUT,
             encoding='UTF-8',
@@ -143,11 +160,15 @@ winsys_type_path_map = {
     'localappdata': lambda: get_winsys_folder('LocalApplicationData'),
     'temp': lambda: get_winsys_folder('TEMP'),
     'sys': lambda: get_winsys_folder('System'),
+    'sysx86': lambda: get_winsys_folder('SystemX86'),
     'windir': lambda: get_winsys_folder('Windows'),
     'startmenu': lambda: get_winsys_folder('StartMenu'),
     'startup': lambda: get_winsys_folder('Startup'),
-    'home': lambda: get_winsys_env('HOME'),
+    'home': lambda: get_winsys_envvar('HOME'),
     'programfiles': lambda: get_winsys_folder('ProgramFiles'),
+    'programfilesx86': lambda: get_winsys_folder('ProgramFilesX86'),
+    'programdata': lambda: get_winsys_regenv('ProgramData'),
+    'allusersprofile': lambda: get_winsys_regenv('ALLUSERSPROFILE')
 }
 
 
@@ -173,11 +194,16 @@ def get_winsys_path(win_path_type):
 @click.option('--localappdata', 'win_path_type', flag_value='localappdata')
 @click.option('--temp', 'win_path_type', flag_value='temp')
 @click.option('--sysdir', 'win_path_type', flag_value='sys')
+@click.option('--sysx86dir', 'win_path_type', flag_value='sysx86')
 @click.option('--windir', 'win_path_type', flag_value='windir')
 @click.option('--start-menu', 'win_path_type', flag_value='startmenu')
 @click.option('--startup', 'win_path_type', flag_value='startup')
 @click.option('--home', 'win_path_type', flag_value='home')
 @click.option('--program-files', 'win_path_type', flag_value='programfiles')
+@click.option('--programfiles', 'win_path_type', flag_value='programfiles')
+@click.option('--programfilesx86', 'win_path_type', flag_value='programfilesx86')
+@click.option('--allusersprofile', 'win_path_type', flag_value='allusersprofile')
+@click.option('--programdata', 'win_path_type', flag_value='programdata')
 @click.argument('path', nargs=-1)
 def main(show_version, path_format, abs_path_option, doubledash_path_option,
          win_path_type, path):
