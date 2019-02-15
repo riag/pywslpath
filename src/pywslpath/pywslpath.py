@@ -7,7 +7,7 @@ import click
 
 __version__ = '0.2.0'
 
-WSL_ROOTFS_DIR = os.environ['WSL_ROOTFS_DIR']
+WSL_ROOTFS_DIR = os.environ['WSL_DISTRO_ROOTFS_DIR']
 if WSL_ROOTFS_DIR and WSL_ROOTFS_DIR.endswith('/'):
     WSL_ROOTFS_DIR = WSL_ROOTFS_DIR[:-1]
 
@@ -68,7 +68,7 @@ def convert_to_win_path(doubledash_path_option, path, check=True):
     p = path
     if not p.startswith('/mnt/'):
         if not WSL_ROOTFS_DIR:
-            raise OSError("please define env var WSL_ROOTFS_DIR")
+            raise OSError("please define env var WSL_DISTRO_ROOTFS_DIR")
 
         p = '%s%s' % (WSL_ROOTFS_DIR, p)
 
@@ -89,7 +89,7 @@ def convert_to_wsl_path(path, check=True):
             return path
 
     if not WSL_ROOTFS_DIR:
-        raise OSError("please define env var WSL_ROOTFS_DIR")
+        raise OSError("please define env var WSL_DISTRO_ROOTFS_DIR")
 
     p = path
     idx = p.find(':')
