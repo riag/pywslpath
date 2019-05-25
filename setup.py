@@ -12,6 +12,7 @@ setup(
     author='riag',
     description='Converts Unix and Windows format paths in WSL',
     long_description=open("README.md").read(),
+    long_description_content_type="text/markdown",
     license='Apache',
     author_email='riag@163.com',
     url='https://github.com/riag/pywslpath',

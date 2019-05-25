@@ -8,6 +8,12 @@ windows 和 WSL 的路径互相转换，以及获取 windows 下的系统目录
 python3 setup.py install
 ```
 
+或者使用 pip 来安装
+
+```
+pip3 install pywslpath
+```
+
 ## 用法
 因为该脚本支持把 WSL Linux 下的所有路径转成 Windows,
 所以要设置 `WSL_ROOTFS_DIR` 环境变量，指向当前 WSL Linux 安装的路径
